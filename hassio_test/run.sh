@@ -1,3 +1,3 @@
-#!/usr/bin/with-contenv bashio
+#!/usr/bin/env bashio
 
 python3 -m http.server 8000
