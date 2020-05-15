@@ -1,6 +1,6 @@
 {
   "name": "hassio test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "slug": "hassio-test",
   "description": "prueba para addon hassio",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
