@@ -6,7 +6,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV LANG C.UTF-8
 
-RUN apk update && apk add --no-cache bash sudo python3 && rm -rf /var/cache/apk/*
+RUN apk update && apk add --no-cache bash sudo python3
 
 # Copy data for add-on
 COPY run.sh /
