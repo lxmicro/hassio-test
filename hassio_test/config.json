@@ -1,0 +1,36 @@
+{
+  "name": "hassio test",
+  "version": "1.4",
+  "slug": "hassio-test",
+  "description": "prueba para addon hassio",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "url": "https://github.com/lxmicro/hassio-test",
+  "startup": "system",
+  "boot": "auto",
+  "host_network": true,
+  "apparmor": false,
+  "host_dbus": true,
+  "full_access": true,
+  "privileged": [
+    "NET_ADMIN",
+    "SYS_ADMIN",
+    "SYS_RAWIO",
+    "SYS_TIME",
+    "SYS_NICE"
+  ],
+  "devices": [
+    "/dev/mem:/dev/mem:rwm"
+  ],
+  "map": [
+    "config:rw",
+    "ssl:rw",
+    "addons:rw",
+    "share:rw",
+    "backup:rw"
+  ],
+  "options": {},
+  "schema": {},
+  "ports": {
+    "8000/tcp": 8000
+  }
+}
