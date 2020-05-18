@@ -3,7 +3,7 @@
 set -e
 
 INTERFACE="dummy0"
-IP="10.0.0.0"
+IP="10.0.0.1"
 
 INI_CMDS_1="ifconfig $INTERFACE | awk '{ if(match(\$0,/$INTERFACE/)){ print 0; } }'"
 INI_CMDS_2="ip link delete $INTERFACE 2>/dev/null"
