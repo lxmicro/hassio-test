@@ -13,6 +13,18 @@ STR_CMDS_2="ip link set $INTERFACE multicast on 2>/dev/null"
 STR_CMDS_3="ip addr add $IP/24 dev $INTERFACE 2>/dev/null"
 STR_CMDS_4="ip link set $INTERFACE up 2>/dev/null"
 
+term_handler(){
+	echo "Stopping..."
+	local cmd=$(echo "$INI_CMDS_2")
+  local r=$(awk -v cmd="$cmd" 'BEGIN {rst=system(cmd); print rst}')
+  if [ "$r" == 0 ]; then
+    echo "Stopped Ok"
+    exit 0
+  else
+    echo "Error"
+    exit 1
+  fi
+}
 
 function cmd_init {
   local r=$(eval "$INI_CMDS_1")
