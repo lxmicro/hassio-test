@@ -1,6 +1,6 @@
 {
   "name": "hassio test",
-  "version": "1.5",
+  "version": "1.6",
   "slug": "hassio-test",
   "description": "prueba para addon hassio",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -21,7 +21,7 @@
   "options": {
     "default_lease": 86400,
     "max_lease": 172800,
-    "domain": null,
+    "domain": "localhost.net",
     "dns": ["8.8.8.8", "8.8.4.4"],
     "networks": [
       {
