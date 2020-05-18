@@ -66,6 +66,8 @@ function create_interface(){
   return 1
 }
 
+trap 'term_handler' SIGTERM
+
 if [ "$(cmd_init)" -ne 0 ]; then
   exit 1
 fi
