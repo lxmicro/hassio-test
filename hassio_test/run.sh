@@ -6,6 +6,7 @@ INTERFACE="dummy0"
 IP="10.0.0.1"
 CONFIG="/etc/dhcpd.conf"
 LEASES="/data/dhcpd.lease"
+WAIT_PIDS=()
 
 INI_CMDS_1="ifconfig $INTERFACE | awk '{ if(match(\$0,/$INTERFACE/)){ print 0; } }'"
 INI_CMDS_2="ip link delete $INTERFACE 2>/dev/null"
@@ -26,7 +27,12 @@ stop_addon(){
     echo "Error"
     exit 1
   fi
+  kill -15 "${WAIT_PIDS[@]}"
+  wait "${WAIT_PIDS[@]}"
+  echo "Done."
 }
+
+WAIT_PIDS+=($!)
 
 function cmd_init() {
   local r=$(eval "$INI_CMDS_1")
@@ -84,4 +90,4 @@ if [ "$(create_interface)" -ne 0 ]; then
 fi
 
 bashio::log.info "Ok"
-exit 0
+wait "${WAIT_PIDS[@]}"
