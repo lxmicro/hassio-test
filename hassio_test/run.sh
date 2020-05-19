@@ -15,6 +15,7 @@ STR_CMDS_2="ip link set $INTERFACE multicast on 2>/dev/null"
 STR_CMDS_3="ip addr add $IP/24 dev $INTERFACE 2>/dev/null"
 STR_CMDS_4="ip link set $INTERFACE up 2>/dev/null"
 
+
 function stop_addon(){
   bashio::log.info "Removing Network Interface ..."
   local cmd=$(echo "$INI_CMDS_2")
@@ -27,6 +28,7 @@ function stop_addon(){
     exit 1
   fi
 }
+
 
 function cmd_init() {
   local r=$(eval "$INI_CMDS_1")
@@ -46,6 +48,7 @@ function cmd_init() {
   echo 1
   return 1
 }
+
 
 function create_interface(){
   local cmd=$(echo "$STR_CMDS_1")
@@ -70,6 +73,7 @@ function create_interface(){
   return 1
 }
 
+
 function TABLE_UP_RULE_01(){
   local cmd=$(iptables-save | grep -- "-A POSTROUTING -o eth0 -j MASQUERADE" | awk '{ if ( $0 ){ print "1" } }')
   if [ ! -z "$cmd" ]; then
@@ -88,6 +92,7 @@ function TABLE_UP_RULE_01(){
   echo 1
   return 1
 }
+
 
 function TABLE_UP_RULE_02(){
   local cmd=$(iptables-save | grep -- "-A FORWARD -i eth0 -o $INTERFACE -m state --state RELATED,ESTABLISHED -j ACCEPT" | awk '{ if ( $0 ){ print "1" } }')
@@ -126,6 +131,7 @@ function TABLE_UP_RULE_03(){
   echo 1
   return 1
 }
+
 
 trap "stop_addon" SIGTERM SIGHUP
 bashio::log.info "Starting ..."
