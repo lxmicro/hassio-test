@@ -32,10 +32,10 @@
   "options": {
     "hostapd": [
       {
-        "name": "",
-        "passphrase": "",
+        "name": "HassioPortal",
+        "passphrase": "1234567890",
         "channel": "7",
-        "hostad_interface": "",
+        "hostad_interface": "wlan0",
         "hostap_ip": "10.0.0.1",
         "country_code": "US",
         "hw_mode": "g"
