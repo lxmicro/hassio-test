@@ -1,19 +1,5 @@
 #!/usr/bin/env bashio
 
-set -e
-
-IP="10.0.0.1"
-CONFIG="/etc/dhcpd.conf"
-LEASES="/data/dhcpd.lease"
-
-INI_CMDS_1="ifconfig $INTERFACE | awk '{ if(match(\$0,/$INTERFACE/)){ print 0; } }'"
-INI_CMDS_2="ip link delete $INTERFACE 2>/dev/null"
-
-STR_CMDS_1="ip link add $INTERFACE type dummy 2>/dev/null"
-STR_CMDS_2="ip link set $INTERFACE multicast on 2>/dev/null"
-STR_CMDS_3="ip addr add $IP/24 dev $INTERFACE 2>/dev/null"
-STR_CMDS_4="ip link set $INTERFACE up 2>/dev/null"
-
 for OPTION in $(bashio::config 'hostapd|keys'); do
     NAME=$(bashio::config "hostapd[${OPTION}].name")
     PASS=$(bashio::config "hostapd[${OPTION}].passphrase")
@@ -39,7 +25,7 @@ for OPTION in $(bashio::config 'hostapd|keys'); do
     } >> "${HOSTAP_CONFIG}"
 done
 
-echo $HOSTAP_CONFIG
+echo "valor: $HOSTAP_CONFIG"
 bashio::log.info $HOSTAP_CONFIG
 
 exit 0
