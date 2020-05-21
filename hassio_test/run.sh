@@ -14,7 +14,6 @@ STR_CMDS_2="ip link set $INTERFACE multicast on 2>/dev/null"
 STR_CMDS_3="ip addr add $IP/24 dev $INTERFACE 2>/dev/null"
 STR_CMDS_4="ip link set $INTERFACE up 2>/dev/null"
 
-
 for OPTION in $(bashio::config 'hostapd|keys'); do
     NAME=$(bashio::config "hostapd[${OPTION}].name")
     PASS=$(bashio::config "hostapd[${OPTION}].passphrase")

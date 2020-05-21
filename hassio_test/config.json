@@ -40,19 +40,6 @@
         "country_code": "US",
         "hw_mode": "g"
       }
-    ],
-    "networks": [
-      {
-        "default_lease": 86400,
-        "max_lease": 172800,
-        "dns": ["8.8.8.8", "8.8.4.4"],
-        "subnet": "10.0.0.0",
-        "netmask": "255.255.255.0",
-        "range_start": "10.0.0.2",
-        "range_end": "10.0.0.22",
-        "broadcast": "10.0.0.254",
-        "wlan_interface": "eth0"
-      }
     ]
   },
   "schema": {
@@ -65,13 +52,6 @@
       "hostap_ip": "str",
       "country_code": "str",
       "hw_mode": "str"
-      }
-    ],
-    "networks": [
-      {
-        "default_lease": "int",
-        "max_lease": "int",
-        "wlan_interface": "str"
       }
     ]
   }
