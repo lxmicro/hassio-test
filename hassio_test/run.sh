@@ -2,12 +2,14 @@
 
 for OPTION in $(bashio::config 'hostapd|keys'); do
     NAME=$(bashio::config "hostapd[${OPTION}].name")
+    echo "$NAME"
     PASS=$(bashio::config "hostapd[${OPTION}].passphrase")
     CHANNEL=$(bashio::config "hostapd[${OPTION}].channel")
     INTERFACE=$(bashio::config "hostapd[${OPTION}].hostad_interface")
     BROADCAST=$(bashio::config "hostapd[${OPTION}].hostad_ip")
     COUNTRY="$(bashio::config "hostapd[${OPTION}].country_code")"
     MODE="$(bashio::config "hostapd[${OPTION}].hw_mode")"
+    
     {
         echo "country_code=${COUNTRY}"
         echo "interface=${INTERFACE}"
