@@ -2,8 +2,7 @@ ARG BUILD_FROM
 FROM $BUILD_FROM
 
 #set shell
-
-SHELL [ "/usr/bin/env", "-o", "pipefail", "-c" ]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV LANG C.UTF-8
 
