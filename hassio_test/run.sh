@@ -1,33 +1,16 @@
 #!/usr/bin/env bashio
 
 for OPTION in $(bashio::config 'hostapd|keys'); do
-    NAME=$(bashio::config "hostapd[${OPTION}].name")
-    echo "$NAME"
-    PASS=$(bashio::config "hostapd[${OPTION}].passphrase")
-    CHANNEL=$(bashio::config "hostapd[${OPTION}].channel")
-    INTERFACE=$(bashio::config "hostapd[${OPTION}].hostad_interface")
-    BROADCAST=$(bashio::config "hostapd[${OPTION}].hostad_ip")
-    COUNTRY="$(bashio::config "hostapd[${OPTION}].country_code")"
-    MODE="$(bashio::config "hostapd[${OPTION}].hw_mode")"
-    
-    {
-        echo "country_code=${COUNTRY}"
-        echo "interface=${INTERFACE}"
-        echo "ssid=${NAME}"
-        echo "hw_mode=${MODE}"
-        echo "channel=${CHANNEL}"
-        echo "macaddr_acl=0"
-        echo "auth_algs=1"
-        echo "ignore_broadcast_ssid=0"
-        echo "wpa=2"
-        echo "wpa_passphrase=${PASS}"
-        echo "wpa_key_mgmt=WPA-PSK"
-        echo "wpa_pairwise=TKIP"
-        echo "rsn_pairwise=CCMP"
-    } > "${HOSTAP_CONFIG}"
+    HOSTAP_NAME=$(bashio::config "hostapd[${OPTION}].name")
+    HOSTAP_PASS=$(bashio::config "hostapd[${OPTION}].passphrase")
+    HOSTAP_CHANNEL=$(bashio::config "hostapd[${OPTION}].channel")
+    HOSTAP_INTERFACE=$(bashio::config "hostapd[${OPTION}].hostad_interface")
+    HOSTAP_BROADCAST=$(bashio::config "hostapd[${OPTION}].hostad_ip")
+    HOSTAP_COUNTRY="$(bashio::config "hostapd[${OPTION}].country_code")"
+    HOSTAP_MODE="$(bashio::config "hostapd[${OPTION}].hw_mode")"
 done
 
-echo "address $HOSTAP_CONFIG"$'\n'
+echo "address $HOSTAP_NAME"$'\n'
 exit 0
 
 function stop_addon(){
