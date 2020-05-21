@@ -2,11 +2,12 @@ ARG BUILD_FROM
 FROM $BUILD_FROM
 
 #set shell
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+SHELL [ "/usr/bin/env", "-o", "pipefail", "-c" ]
 
 ENV LANG C.UTF-8
 
-RUN apk update && apk add --no-cache bash sudo dhcp iptables net-tools 
+RUN apk update && apk add --no-cache bash sudo dhcp iptables net-tools util-linux
 
 WORKDIR /data
 

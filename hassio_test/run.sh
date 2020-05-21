@@ -2,7 +2,6 @@
 
 set -e
 
-INTERFACE="dummy0"
 IP="10.0.0.1"
 CONFIG="/etc/dhcpd.conf"
 LEASES="/data/dhcpd.lease"
@@ -15,6 +14,36 @@ STR_CMDS_2="ip link set $INTERFACE multicast on 2>/dev/null"
 STR_CMDS_3="ip addr add $IP/24 dev $INTERFACE 2>/dev/null"
 STR_CMDS_4="ip link set $INTERFACE up 2>/dev/null"
 
+
+for OPTION in $(bashio::config 'hostapd|keys'); do
+    NAME=$(bashio::config "hostapd[${OPTION}].name")
+    PASS=$(bashio::config "hostapd[${OPTION}].passphrase")
+    CHANNEL=$(bashio::config "hostapd[${OPTION}].channel")
+    INTERFACE=$(bashio::config "hostapd[${OPTION}].hostad_interface")
+    BROADCAST=$(bashio::config "hostapd[${OPTION}].hostad_ip")
+    COUNTRY="$(bashio::config "hostapd[${OPTION}].country_code")"
+    MODE="$(bashio::config "hostapd[${OPTION}].hw_mode")"
+    {
+        echo "country_code=${COUNTRY}"
+        echo "interface=${INTERFACE}"
+        echo "ssid=${NAME}"
+        echo "hw_mode=${MODE}"
+        echo "channel=${CHANNEL}"
+        echo "macaddr_acl=0"
+        echo "auth_algs=1"
+        echo "ignore_broadcast_ssid=0"
+        echo "wpa=2"
+        echo "wpa_passphrase=${PASS}"
+        echo "wpa_key_mgmt=WPA-PSK"
+        echo "wpa_pairwise=TKIP"
+        echo "rsn_pairwise=CCMP"
+    } >> "${HOSTAP_CONFIG}"
+done
+
+echo $HOSTAP_CONFIG
+bashio::log.info $HOSTAP_CONFIG
+
+exit 0
 
 function stop_addon(){
   bashio::log.info "Removing Network Interface ..."
@@ -113,6 +142,7 @@ function TABLE_UP_RULE_02(){
   return 1
 }
 
+
 function TABLE_UP_RULE_03(){
   local cmd=$(iptables-save | grep -- "-A FORWARD -i $INTERFACE -o eth0 -j ACCEPT" | awk '{ if ( $0 ){ print "1" } }')
   if [ ! -z "$cmd" ]; then
@@ -132,7 +162,6 @@ function TABLE_UP_RULE_03(){
   return 1
 }
 
-
 trap "stop_addon" SIGTERM SIGHUP
 bashio::log.info "Starting ..."
 
@@ -149,17 +178,17 @@ fi
 bashio::log.info "Creating iptables rules ..."
 
 if [ "$(TABLE_UP_RULE_01)" -ne 0 ]; then
-  bashio::log.info "Error iptables rule 1"
+  bashio::log.info "Error: in iptables rule 1"
   exit 1
 fi
 
 if [ "$(TABLE_UP_RULE_02)" -ne 0 ]; then
-  bashio::log.info "Error iptables rule 2"
+  bashio::log.info "Error: in iptables rule 2"
   exit 1
 fi
 
 if [ "$(TABLE_UP_RULE_03)" -ne 0 ]; then
-  bashio::log.info "Error iptables rule 3"
+  bashio::log.info "Error: in iptables rule 3"
   exit 1
 fi
 

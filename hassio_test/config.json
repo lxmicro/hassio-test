@@ -1,10 +1,11 @@
 {
-  "name": "hassio test",
-  "version": "1.6",
-  "slug": "hassio-test",
-  "description": "prueba para addon hassio",
+  "name": "hotspot for hassio",
+  "version": "1.0.0",
+  "slug": "hassio-hotspot",
+  "description": "Configure Hotspot",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "url": "https://github.com/lxmicro/hassio-test",
+  "advanced": true,
   "startup": "system",
   "boot": "auto",
   "host_network": true,
@@ -18,49 +19,60 @@
     "SYS_TIME",
     "SYS_NICE"
   ],
+  "devices": [
+    "/dev/mem:/dev/mem:rwm"
+  ],
+  "map": [
+    "config:rw",
+    "ssl:rw",
+    "addons:rw",
+    "share:rw",
+    "backup:rw"
+  ],
   "options": {
-    "default_lease": 86400,
-    "max_lease": 172800,
-    "domain": "localhost.net",
-    "dns": ["8.8.8.8", "8.8.4.4"],
+    "hostapd": [
+      {
+        "name": "",
+        "passphrase": "",
+        "channel": "7",
+        "hostad_interface": "",
+        "hostap_ip": "10.0.0.1",
+        "country_code": "US",
+        "hw_mode": "g"
+      }
+    ],
     "networks": [
       {
+        "default_lease": 86400,
+        "max_lease": 172800,
+        "dns": ["8.8.8.8", "8.8.4.4"],
         "subnet": "10.0.0.0",
         "netmask": "255.255.255.0",
         "range_start": "10.0.0.2",
-        "range_end": "10.0.0.100",
-        "broadcast": "192.168.1.255",
-        "gateway": "10.0.0.1",
-        "interface": "eth0"
-      }
-    ],
-    "hosts": []
-  },
-  "schema": {
-    "default_lease": "int",
-    "max_lease": "int",
-    "domain": "str",
-    "dns": ["str"],
-    "networks": [
-      {
-        "subnet": "str",
-        "netmask": "str",
-        "range_start": "str",
-        "range_end": "str",
-        "broadcast": "str",
-        "gateway": "str",
-        "interface": "str"
-      }
-    ],
-    "hosts": [
-      {
-        "mac": "str",
-        "name": "str",
-        "ip": "str"
+        "range_end": "10.0.0.22",
+        "broadcast": "10.0.0.254",
+        "wlan_interface": "eth0"
       }
     ]
   },
-  "ports": {
-    "8000/tcp": 8000
+  "schema": {
+    "hostapd": [
+      {
+      "name": "str",
+      "passphrase": "str",
+      "channel": "int",
+      "hostad_interface": "str",
+      "hostap_ip": "str",
+      "country_code": "str",
+      "hw_mode": "str"
+      }
+    ],
+    "networks": [
+      {
+        "default_lease": "int",
+        "max_lease": "int",
+        "wlan_interface": "str"
+      }
+    ]
   }
 }
