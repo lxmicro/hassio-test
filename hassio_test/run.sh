@@ -10,7 +10,7 @@ for OPTION in $(bashio::config 'hostapd|keys'); do
     HOSTAP_MODE="$(bashio::config "hostapd[${OPTION}].hw_mode")"
 done
 
-echo "address $HOSTAP_NAME"$'\n'
+bashio::log.info "address $HOSTAP_NAME"
 exit 0
 
 function stop_addon(){
