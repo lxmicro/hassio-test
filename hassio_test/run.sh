@@ -25,9 +25,7 @@ for OPTION in $(bashio::config 'hostapd|keys'); do
     } > "${HOSTAP_CONFIG}"
 done
 
-echo "valor: $HOSTAP_CONFIG"
-bashio::log.info $HOSTAP_CONFIG
-
+echo "address $HOSTAP_CONFIG"$'\n'
 exit 0
 
 function stop_addon(){
