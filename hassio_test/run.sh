@@ -22,7 +22,7 @@ for OPTION in $(bashio::config 'hostapd|keys'); do
         echo "wpa_key_mgmt=WPA-PSK"
         echo "wpa_pairwise=TKIP"
         echo "rsn_pairwise=CCMP"
-    } >> "${HOSTAP_CONFIG}"
+    } > "${HOSTAP_CONFIG}"
 done
 
 echo "valor: $HOSTAP_CONFIG"
