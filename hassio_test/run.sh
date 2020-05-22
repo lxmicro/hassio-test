@@ -26,7 +26,6 @@ function stop_addon(){
   fi
 }
 
-
 function cmd_init() {
   local r=$(eval "$INI_CMDS_1")
   if [ "$r" == 0 ]; then
