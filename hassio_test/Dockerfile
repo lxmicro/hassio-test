@@ -6,7 +6,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV LANG C.UTF-8
 
-RUN apk update && apk add --no-cache bash sudo dhcp iptables net-tools util-linux
+RUN apk update && apk add --no-cache bash sudo dhcp iptables net-tools
 
 WORKDIR /data
 
