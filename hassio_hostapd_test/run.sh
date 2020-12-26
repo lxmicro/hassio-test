@@ -84,7 +84,7 @@ if [ ! -z "$JSON_STR" ]; then
     if [[ -n $error ]]; then
       exit 1
     fi
-	if [[ -d "$CLIENTS_DIR"]]; then
+	if [[ -d "$CLIENTS_DIR" ]]; then
         echo -n "$MSG_STR" > "$CLIENTS_DIR/$CLIENTS_FILE"
 	else
 	    error=1
