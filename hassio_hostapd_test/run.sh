@@ -44,8 +44,9 @@ fi
 declare -a CLIENTS=()
 
 if [ -f "$RSLT_FILE" ]; then
-    while IFS= read -r line do
-      CLIENTS+=($(echo "$line" | awk '{print $1}'))
+    while IFS= read -r line 
+	do
+        CLIENTS+=($(echo "$line" | awk '{print $1}'))
     done < "$RSLT_FILE"
     rm "$RSLT_FILE"
 else
