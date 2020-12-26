@@ -3,7 +3,7 @@
 TMP_DIR="/tmp"
 PID_FILE="$TMP_DIR/netscan.pip"
 RSLT_FILE="$TMP_DIR/clients.tmp"
-CLIENTS_DIR="/data/netscan"
+CLIENTS_DIR="/config/custom_components/netscan"
 CLIENTS_FILE="clients.json"
 
 term_handler(){
@@ -11,7 +11,6 @@ term_handler(){
 	exit 0
 }
 
-# Setup signal handlers
 trap 'term_handler' SIGTERM
 
 echo "Starting..."
