@@ -1,64 +1,61 @@
 #!/bin/bash
 
-# SIGTERM-handler this funciton will be executed when the container receives the SIGTERM signal (when stopping)
-term_handler(){
-	echo "Stopping..."
-	ifdown wlan0
-	ip link set wlan0 down
-	ip addr flush dev wlan0
-	exit 0
-}
+TMP_DIR="/tmp"
+PID_FILE="$TMP_DIR/netscan.pip"
+RSLT_FILE="$TMP_DIR/clients.tmp"
 
-# Setup signal handlers
-trap 'term_handler' SIGTERM
-
-echo "Starting..."
-
-echo "Set nmcli managed no"
-nmcli dev set wlan0 managed no
-
-CONFIG_PATH=/data/options.json
-
-SSID=$(jq --raw-output ".ssid" $CONFIG_PATH)
-WPA_PASSPHRASE=$(jq --raw-output ".wpa_passphrase" $CONFIG_PATH)
-CHANNEL=$(jq --raw-output ".channel" $CONFIG_PATH)
-ADDRESS=$(jq --raw-output ".address" $CONFIG_PATH)
-NETMASK=$(jq --raw-output ".netmask" $CONFIG_PATH)
-BROADCAST=$(jq --raw-output ".broadcast" $CONFIG_PATH)
-
-# Enforces required env variables
-required_vars=(SSID WPA_PASSPHRASE CHANNEL ADDRESS NETMASK BROADCAST)
-for required_var in "${required_vars[@]}"; do
-    if [[ -z ${!required_var} ]]; then
-        error=1
-        echo >&2 "Error: $required_var env variable not set."
-    fi
-done
-
-if [[ -n $error ]]; then
-    exit 1
+if [[ ! -f "$PID_FILE" ]] || [[ ! -f "$RSLT_FILE" ]]; then
+  echo $$ > "$PID_FILE"
+  echo -n '' > "$RSLT_FILE"
+  /usr/sbin/fping -A -d -a -q -g -a -i 1 -r 0 192.168.1.0/24 > "$RSLT_FILE" 2>&1
+else
+  echo "program is running" >&2
+  exit 1
 fi
 
-# Setup hostapd.conf
-echo "Setup hostapd ..."
-echo "ssid=$SSID"$'\n' >> /hostapd.conf
-echo "wpa_passphrase=$WPA_PASSPHRASE"$'\n' >> /hostapd.conf
-echo "channel=$CHANNEL"$'\n' >> /hostapd.conf
+declare -a CLIENTS=()
 
-# Setup interface
-echo "Setup interface ..."
+if [ -f "$RSLT_FILE" ]; then
+  while IFS= read -r line
+  do
+    CLIENTS+=($(echo "$line" | awk '{print $1}'))
+  done < "$RSLT_FILE"
+  rm "$RSLT_FILE"
+else
+  if [ -f "$PID_FILE" ]; then
+    rm "$PID_FILE"
+  fi
+  echo "file not found" >&2
+  exit 1
+fi
 
-#ip link set wlan0 down
-#ip addr flush dev wlan0
-#ip addr add ${IP_ADDRESS}/24 dev wlan0
-#ip link set wlan0 up
+JSON_STR=""
 
-echo "address $ADDRESS"$'\n' >> /etc/network/interfaces
-echo "netmask $NETMASK"$'\n' >> /etc/network/interfaces
-echo "broadcast $BROADCAST"$'\n' >> /etc/network/interfaces
+if [ $CLIENTS ]; then
+  for i in ${!CLIENTS[@]}; do
+    JSON_STR+='"'${CLIENTS[$i]}'"'
+  done
+else
+  if [ -f "$PID_FILE" ]; then
+    rm "$PID_FILE"
+  fi
+  echo "not clients found" >&2
+  exit 1
+fi
 
-ifdown wlan0
-ifup wlan0
+if [ ! -z "$JSON_STR" ]; then
+  MSG_STR=$(echo "{\"clients\":[$JSON_STR]}" | sed -e 's/""/","/g')
+  /usr/bin/mosquitto_pub -h 192.168.1.179 -t PcControl/network/clients -m "$MSG_STR"  
+else
+  if [ -f "$PID_FILE" ]; then
+    rm "$PID_FILE"
+  fi
+  echo "not clients" >&2
+  exit 1
+fi
 
-echo "Starting HostAP daemon ..."
-hostapd -d /hostapd.conf & wait ${!}
+if [ -f "$PID_FILE" ]; then
+  rm "$PID_FILE"
+fi
+
+exit 0
