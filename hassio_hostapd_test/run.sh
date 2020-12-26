@@ -1,61 +1,31 @@
 #!/bin/bash
 
-TMP_DIR="/tmp"
-PID_FILE="$TMP_DIR/netscan.pip"
-RSLT_FILE="$TMP_DIR/clients.tmp"
+# SIGTERM-handler this funciton will be executed when the container receives the SIGTERM signal (when stopping)
 
-if [[ ! -f "$PID_FILE" ]] || [[ ! -f "$RSLT_FILE" ]]; then
-  echo $$ > "$PID_FILE"
-  echo -n '' > "$RSLT_FILE"
-  /usr/sbin/fping -A -d -a -q -g -a -i 1 -r 0 192.168.1.0/24 > "$RSLT_FILE" 2>&1
-else
-  echo "program is running" >&2
-  exit 1
+term_handler(){
+	echo "Stopping..."
+	exit 0
+}
+
+# Setup signal handlers
+trap 'term_handler' SIGTERM
+
+echo "Starting..."
+
+CONFIG_PATH=/data/options.json
+
+MQTT_SERVER=$(jq --raw-output ".mqtt_server" $CONFIG_PATH)
+required_vars=(MQTT_SERVER)
+for required_var in "${required_vars[@]}"; do
+    if [[ -z ${!required_var} ]]; then
+        error=1
+        echo >&2 "Error: $required_var env variable not set."
+    fi
+done
+
+if [[ -n $error ]]; then
+    exit 1
 fi
 
-declare -a CLIENTS=()
-
-if [ -f "$RSLT_FILE" ]; then
-  while IFS= read -r line
-  do
-    CLIENTS+=($(echo "$line" | awk '{print $1}'))
-  done < "$RSLT_FILE"
-  rm "$RSLT_FILE"
-else
-  if [ -f "$PID_FILE" ]; then
-    rm "$PID_FILE"
-  fi
-  echo "file not found" >&2
-  exit 1
-fi
-
-JSON_STR=""
-
-if [ $CLIENTS ]; then
-  for i in ${!CLIENTS[@]}; do
-    JSON_STR+='"'${CLIENTS[$i]}'"'
-  done
-else
-  if [ -f "$PID_FILE" ]; then
-    rm "$PID_FILE"
-  fi
-  echo "not clients found" >&2
-  exit 1
-fi
-
-if [ ! -z "$JSON_STR" ]; then
-  MSG_STR=$(echo "{\"clients\":[$JSON_STR]}" | sed -e 's/""/","/g')
-  /usr/bin/mosquitto_pub -h 192.168.1.179 -t PcControl/network/clients -m "$MSG_STR"  
-else
-  if [ -f "$PID_FILE" ]; then
-    rm "$PID_FILE"
-  fi
-  echo "not clients" >&2
-  exit 1
-fi
-
-if [ -f "$PID_FILE" ]; then
-  rm "$PID_FILE"
-fi
-
-exit 0
+echo "Starting HostAP daemon ..."
+hostapd -d /hostapd.conf & wait ${!}
