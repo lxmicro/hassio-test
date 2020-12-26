@@ -17,6 +17,8 @@ echo "Starting..."
 CONFIG_PATH=/data/options.json
 
 MQTT_SERVER=$(jq --raw-output ".mqtt_server" $CONFIG_PATH)
+MQTT_TOPIC=$(jq --raw-output ".mqtt_topic" $CONFIG_PATH)
+
 required_vars=(MQTT_SERVER MQTT_TOPIC)
 for required_var in "${required_vars[@]}"; do
     if [[ -z ${!required_var} ]]; then
