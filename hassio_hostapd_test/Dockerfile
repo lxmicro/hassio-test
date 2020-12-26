@@ -11,9 +11,9 @@ ENV LANG C.UTF-8
 # Install requirements for add-on
 RUN  apk update && apk add --no-cache bash fping mosquitto-clients && rm -rf /var/cache/apk/*
 
-RUN mkdir /config/custom_components/netscan
-COPY netscan /config/custom_components/netscan.sh
-RUN chmod a+x /config/custom_components/netscan.sh
+WORKDIR /data
+COPY netscan netscan
+RUN chmod a+x netscan
 
 COPY run.sh /
 RUN chmod a+x /run.sh
