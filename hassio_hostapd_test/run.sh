@@ -17,7 +17,7 @@ echo "Starting..."
 CONFIG_PATH=/data/options.json
 
 MQTT_SERVER=$(jq --raw-output ".mqtt_server" $CONFIG_PATH)
-required_vars=(MQTT_SERVER)
+required_vars=(MQTT_SERVER MQTT_TOPIC)
 for required_var in "${required_vars[@]}"; do
     if [[ -z ${!required_var} ]]; then
         error=1
@@ -68,7 +68,7 @@ fi
 
 if [ ! -z "$JSON_STR" ]; then
   MSG_STR=$(echo "{\"clients\":[$JSON_STR]}" | sed -e 's/""/","/g')
-  /usr/bin/mosquitto_pub -h "$MQTT_SERVER" -t PcControl/network/basiliso/clients -m "$MSG_STR"  
+  /usr/bin/mosquitto_pub -h "$MQTT_SERVER" -t "$MQTT_TOPIC" -m "$MSG_STR"  
 else
   if [ -f "$PID_FILE" ]; then
     rm "$PID_FILE"

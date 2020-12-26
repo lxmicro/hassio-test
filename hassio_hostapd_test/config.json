@@ -1,6 +1,6 @@
 {
   "name": "Hassio Test",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "slug": "hassio-test",
   "description": "test for hassio",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -29,9 +29,11 @@
     "backup:rw"
   ],
   "options": {
-    "mqtt_server": ""
+    "mqtt_server": "",
+	"mqtt_topic": ""
   },
   "schema": {
-    "mqtt_server": "str"
+    "mqtt_server": "str",
+	"mqtt_topic": "str"
   }
 } 
