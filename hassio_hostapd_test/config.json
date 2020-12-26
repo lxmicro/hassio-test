@@ -1,14 +1,14 @@
 {
-  "name": "Hassio Hostapd",
-  "version": "1.0.3",
-  "slug": "hassio-hostapd",
-  "description": "Raspberry Pi as hotspot in hass.io",
+  "name": "Hassio Test",
+  "version": "1.0.4",
+  "slug": "hassio-test",
+  "description": "test for hassio",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
-  "url": "https://github.com/davidramosweb/hassio-addons/tree/master/hassio-hostapd",
+  "url": "https://github.com/lxmicro/hassio-test",
   "startup": "system",
   "boot": "auto",
   "host_network": true,
-  "apparmor": false,
+  "apparmor": true,
   "host_dbus": true,
   "full_access": true,
   "privileged": [
@@ -29,20 +29,9 @@
     "backup:rw"
   ],
   "options": {
-    "ssid": "",
-    "wpa_passphrase": "",
-    "channel": "6",
-    "address": "192.168.99.1",
-    "netmask": "255.255.255.0",
-    "broadcast": "192.168.99.254"
-
+    "mqtt_server": ""
   },
   "schema": {
-    "ssid": "str",
-    "wpa_passphrase": "str",
-    "channel": "int",
-    "address": "str",
-    "netmask": "str",
-    "broadcast": "str"
+    "mqtt_server": "str"
   }
 } 
