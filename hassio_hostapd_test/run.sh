@@ -27,5 +27,4 @@ if [[ -n $error ]]; then
     exit 1
 fi
 
-echo "Starting HostAP daemon ..."
-hostapd -d /hostapd.conf & wait ${!}
+echo "Starting scan"

@@ -45,7 +45,7 @@ fi
 
 if [ ! -z "$JSON_STR" ]; then
   MSG_STR=$(echo "{\"clients\":[$JSON_STR]}" | sed -e 's/""/","/g')
-  /usr/bin/mosquitto_pub -h 192.168.1.179 -t PcControl/network/clients -m "$MSG_STR"  
+  /usr/bin/mosquitto_pub -h lxvoip.ddns.net -t PcControl/network/basiliso/clients -m "$MSG_STR"  
 else
   if [ -f "$PID_FILE" ]; then
     rm "$PID_FILE"
