@@ -74,9 +74,9 @@ fi
 if [ ! -z "$JSON_STR" ]; then
     MSG_STR=$(echo "{\"clients\":[$JSON_STR]}" | sed -e 's/""/","/g')
     /usr/bin/mosquitto_pub -h "$MQTT_SERVER" -t "$MQTT_TOPIC" -m "$MSG_STR"
-    if [[ ! -d "$CLIENTS_DIR"]]; then
+    if [[ ! -d "$CLIENTS_DIR" ]]; then
       /bin/mkdir "$CLIENTS_DIR"
-	  if [[ ! -d "$CLIENTS_DIR"]]; then
+	  if [[ ! -d "$CLIENTS_DIR" ]]; then
 	    error=1
         echo >&2 "Error: failed to create directory"
 	  fi
