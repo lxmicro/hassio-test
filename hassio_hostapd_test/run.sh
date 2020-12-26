@@ -86,3 +86,4 @@ if [[ -n $error ]]; then
 fi
 
 echo "finish scan"
+exit 0
