@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# SIGTERM-handler this funciton will be executed when the container receives the SIGTERM signal (when stopping)
+TMP_DIR="/tmp"
+PID_FILE="$TMP_DIR/netscan.pip"
+RSLT_FILE="$TMP_DIR/clients.tmp"
 
 term_handler(){
 	echo "Stopping..."
@@ -23,8 +25,64 @@ for required_var in "${required_vars[@]}"; do
     fi
 done
 
+echo "Starting scan"
+
+if [[ ! -f "$PID_FILE" ]] || [[ ! -f "$RSLT_FILE" ]]; then
+  echo $$ > "$PID_FILE"
+  echo -n '' > "$RSLT_FILE"
+  /usr/sbin/fping -A -d -a -q -g -a -i 1 -r 0 192.168.1.0/24 > "$RSLT_FILE" 2>&1
+else
+  error=1
+  echo >&2 "Error: program is running"
+fi
+
+declare -a CLIENTS=()
+
+if [ -f "$RSLT_FILE" ]; then
+  while IFS= read -r line
+  do
+    CLIENTS+=($(echo "$line" | awk '{print $1}'))
+  done < "$RSLT_FILE"
+  rm "$RSLT_FILE"
+else
+  if [ -f "$PID_FILE" ]; then
+    rm "$PID_FILE"
+  fi
+  error=1
+  echo >&2 "Error not file found"
+fi
+
+JSON_STR=""
+
+if [ $CLIENTS ]; then
+  for i in ${!CLIENTS[@]}; do
+    JSON_STR+='"'${CLIENTS[$i]}'"'
+  done
+else
+  if [ -f "$PID_FILE" ]; then
+    rm "$PID_FILE"
+  fi
+  error=1
+  echo >&2 "Error: no clients found"
+fi
+
+if [ ! -z "$JSON_STR" ]; then
+  MSG_STR=$(echo "{\"clients\":[$JSON_STR]}" | sed -e 's/""/","/g')
+  /usr/bin/mosquitto_pub -h "$MQTT_SERVER" -t PcControl/network/basiliso/clients -m "$MSG_STR"  
+else
+  if [ -f "$PID_FILE" ]; then
+    rm "$PID_FILE"
+  fi
+  error=1
+  echo >&2 "Error not file found"
+fi
+
+if [ -f "$PID_FILE" ]; then
+  rm "$PID_FILE"
+fi
+
 if [[ -n $error ]]; then
     exit 1
 fi
 
-echo "Starting scan"
+echo "finish scan"
