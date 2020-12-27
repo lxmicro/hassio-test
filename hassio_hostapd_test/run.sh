@@ -1,5 +1,25 @@
 #!/bin/bash
 
+
+TMP_DIR="/tmp"
+PID_FILE="$TMP_DIR/netscan.pip"
+RSLT_FILE="$TMP_DIR/clients.tmp"
+CLIENTS_DIR="/config/custom_components/netscan"
+CLIENTS_FILE="clients.json"
+
+CONFIG_PATH="/data/options.json"
+MQTT_SERVER=$(jq --raw-output ".mqtt_server" $CONFIG_PATH)
+MQTT_TOPIC=$(jq --raw-output ".mqtt_topic" $CONFIG_PATH)
+
+required_vars=(MQTT_SERVER MQTT_TOPIC)
+
+for required_var in "${required_vars[@]}"; do
+	if [[ -z ${!required_var} ]]; then
+		error=1
+		echo >&2 "Error: $required_var env variable not set."
+	fi
+done
+
 trap 'term_handler' SIGTERM
 
 term_handler(){
@@ -15,9 +35,8 @@ term_handler(){
 	exit 0
 }
 
-function_looper {
+looper() {
 	echo "Starting scan"
-	
 	if [[ ! -f "$PID_FILE" ]] || [[ ! -f "$RSLT_FILE" ]]; then
 		echo $$ > "$PID_FILE"
 		echo -n '' > "$RSLT_FILE"
@@ -102,31 +121,12 @@ function_looper {
 	fi
 }
 
-TMP_DIR="/tmp"
-PID_FILE="$TMP_DIR/netscan.pip"
-RSLT_FILE="$TMP_DIR/clients.tmp"
-CLIENTS_DIR="/config/custom_components/netscan"
-CLIENTS_FILE="clients.json"
-
-CONFIG_PATH="/data/options.json"
-MQTT_SERVER=$(jq --raw-output ".mqtt_server" $CONFIG_PATH)
-MQTT_TOPIC=$(jq --raw-output ".mqtt_topic" $CONFIG_PATH)
-
-required_vars=(MQTT_SERVER MQTT_TOPIC)
-
-for required_var in "${required_vars[@]}"; do
-	if [[ -z ${!required_var} ]]; then
-		error=1
-		echo >&2 "Error: $required_var env variable not set."
-	fi
-done
-
 if [[ -n $error ]]; then
 	exit 1
 else
 	while [ -z $error ]
 	do
-		function_looper
+		looper
 		sleep 5m		
 	done
 fi
