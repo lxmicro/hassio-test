@@ -36,7 +36,9 @@ term_handler(){
 }
 
 looper() {
+
 	echo "Starting scan"
+
 	if [[ ! -f "$PID_FILE" ]] || [[ ! -f "$RSLT_FILE" ]]; then
 		echo $$ > "$PID_FILE"
 		echo -n '' > "$RSLT_FILE"
@@ -127,6 +129,16 @@ else
 	while [ -z $error ]
 	do
 		looper
-		sleep 5m		
+		sleep 1m		
 	done
 fi
+
+if [ -f "$PID_FILE" ]; then
+	rm "$PID_FILE"
+fi
+	
+if [ -f "$RSLT_FILE" ]; then
+	rm "$RSLT_FILE"
+fi
+
+exit 1
