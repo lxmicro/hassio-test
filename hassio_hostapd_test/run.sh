@@ -1,10 +1,9 @@
 #!/bin/bash
 
-
 TMP_DIR="/tmp"
 PID_FILE="$TMP_DIR/netscan.pip"
 RSLT_FILE="$TMP_DIR/clients.tmp"
-CLIENTS_DIR="/config/custom_components/netscan"
+CLIENTS_DIR="/config/www/htdocs"
 CLIENTS_FILE="clients.json"
 
 CONFIG_PATH="/data/options.json"
@@ -26,19 +25,15 @@ term_handler(){
 	if [ -f "$PID_FILE" ]; then
 		rm "$PID_FILE"
 	fi
-	
 	if [ -f "$RSLT_FILE" ]; then
 		rm "$RSLT_FILE"
 	fi
-	
 	echo "Stopping..."
 	exit 0
 }
 
 looper() {
-
 	echo "Starting scan"
-
 	if [[ ! -f "$PID_FILE" ]] || [[ ! -f "$RSLT_FILE" ]]; then
 		echo $$ > "$PID_FILE"
 		echo -n '' > "$RSLT_FILE"
